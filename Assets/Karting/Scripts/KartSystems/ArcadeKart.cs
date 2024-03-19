@@ -1,7 +1,12 @@
 ﻿using System;
+using System.Collections;
 using UnityEngine;
 using System.Collections.Generic;
+using System.Numerics;
 using UnityEngine.VFX;
+using Quaternion = UnityEngine.Quaternion;
+using Vector3 = UnityEngine.Vector3;
+using Vector4 = UnityEngine.Vector4;
 
 namespace KartGame.KartSystems
 {
@@ -113,7 +118,17 @@ namespace KartGame.KartSystems
         public float DriftControl = 10.0f;
         [Range(0.0f, 20.0f), Tooltip("The lower the value, the longer the drift will last without trying to control it by steering.")]
         public float DriftDampening = 10.0f;
-
+        [Range(0.0f, 10f), Tooltip("The higher the value, the less the car slides sideways after drift.")]
+        public float DriftEndDeceleration = 1f;
+        
+        [Header("Boost")]
+        [Range(1.0f, 100.0f), Tooltip("Acceleration while boosting")]
+        public float BoostAcceleration;
+        [Range(1.0f, 100.0f), Tooltip("Max Speed while boosting")]
+        public float BoostMaxSpeed;
+        [Range(0.0f, 10.0f), Tooltip("Duration of boosting")]
+        public float BoostDuration;
+        
         [Header("VFX")]
         [Tooltip("VFX that will be placed on the wheels when drifting.")]
         public ParticleSystem DriftSparkVFX;
@@ -164,6 +179,7 @@ namespace KartGame.KartSystems
         // Drift params
         public bool WantsToDrift { get; private set; } = false;
         public bool IsDrifting { get; private set; } = false;
+        public bool IsBoosting { get; private set; } = false;
         float m_CurrentGrip = 1.0f;
         float m_DriftTurningPower = 0.0f;
         float m_PreviousGroundPercent = 1.0f;
@@ -309,6 +325,10 @@ namespace KartGame.KartSystems
             GroundPercent = (float) groundedCount / 4.0f;
             AirPercent = 1 - GroundPercent;
 
+            if (Input.Boost) {
+                Boost();
+            }
+            
             // apply vehicle physics
             if (m_CanMove)
             {
@@ -331,7 +351,7 @@ namespace KartGame.KartSystems
             for (int i = 0; i < m_Inputs.Length; i++)
             {
                 Input = m_Inputs[i].GenerateInput();
-                WantsToDrift = Input.Brake && Vector3.Dot(Rigidbody.velocity, transform.forward) > 0.0f;
+                WantsToDrift = Input.Brake && Input.Accelerate > 0 && Mathf.Abs(Input.TurnInput) > 0.005f;
             }
         }
 
@@ -393,7 +413,7 @@ namespace KartGame.KartSystems
             else
             {
                 // use this value to play kart sound when it is waiting the race start countdown.
-                return Input.Accelerate ? 1.0f : 0.0f;
+                return Input.Accelerate;
             }
         }
 
@@ -413,9 +433,9 @@ namespace KartGame.KartSystems
             }
         }
 
-        void MoveVehicle(bool accelerate, bool brake, float turnInput)
+        void MoveVehicle(float accelerate, bool brake, float turnInput)
         {
-            float accelInput = (accelerate ? 1.0f : 0.0f) - (brake ? 1.0f : 0.0f);
+            float accelInput = IsBoosting ? 1f : accelerate;
 
             // manual acceleration curve coefficient scalar
             float accelerationCurveCoeff = 5;
@@ -425,7 +445,7 @@ namespace KartGame.KartSystems
             bool localVelDirectionIsFwd = localVel.z >= 0;
 
             // use the max speed for the direction we are going--forward or reverse.
-            float maxSpeed = localVelDirectionIsFwd ? m_FinalStats.TopSpeed : m_FinalStats.ReverseSpeed;
+            float maxSpeed = IsBoosting ? BoostMaxSpeed : localVelDirectionIsFwd ? m_FinalStats.TopSpeed : m_FinalStats.ReverseSpeed;
             float accelPower = accelDirectionIsFwd ? m_FinalStats.Acceleration : m_FinalStats.ReverseAcceleration;
 
             float currentSpeed = Rigidbody.velocity.magnitude;
@@ -433,13 +453,13 @@ namespace KartGame.KartSystems
             float multipliedAccelerationCurve = m_FinalStats.AccelerationCurve * accelerationCurveCoeff;
             float accelRamp = Mathf.Lerp(multipliedAccelerationCurve, 1, accelRampT * accelRampT);
 
-            bool isBraking = (localVelDirectionIsFwd && brake) || (!localVelDirectionIsFwd && accelerate);
+            bool isBraking = (localVelDirectionIsFwd && brake);
 
             // if we are braking (moving reverse to where we are going)
             // use the braking accleration instead
-            float finalAccelPower = isBraking ? m_FinalStats.Braking : accelPower;
+            float finalAccelPower = isBraking && !WantsToDrift ? m_FinalStats.Braking : accelPower;
 
-            float finalAcceleration = finalAccelPower * accelRamp;
+            float finalAcceleration =  IsBoosting ? BoostAcceleration : finalAccelPower * accelRamp;
 
             // apply inputs to forward/backward
             float turningPower = IsDrifting ? m_DriftTurningPower : turnInput * m_FinalStats.Steer;
@@ -536,17 +556,17 @@ namespace KartGame.KartSystems
                     float driftMaxSteerValue = m_FinalStats.Steer + DriftAdditionalSteer;
                     m_DriftTurningPower = Mathf.Clamp(m_DriftTurningPower + (turnInput * Mathf.Clamp01(DriftControl * Time.fixedDeltaTime)), -driftMaxSteerValue, driftMaxSteerValue);
 
-                    bool facingVelocity = Vector3.Dot(Rigidbody.velocity.normalized, transform.forward * Mathf.Sign(accelInput)) > Mathf.Cos(MinAngleToFinishDrift * Mathf.Deg2Rad);
+                    //bool facingVelocity = Vector3.Dot(Rigidbody.velocity.normalized, transform.forward * Mathf.Sign(accelInput)) > Mathf.Cos(MinAngleToFinishDrift * Mathf.Deg2Rad);
 
                     bool canEndDrift = true;
                     if (isBraking)
                         canEndDrift = false;
-                    else if (!facingVelocity)
-                        canEndDrift = false;
+                    // else if (!facingVelocity)
+                    //     canEndDrift = false;
                     else if (turnInputAbs >= k_NullInput && currentSpeed > maxSpeed * MinSpeedPercentToFinishDrift)
                         canEndDrift = false;
 
-                    if (canEndDrift || currentSpeed < k_NullSpeed)
+                    if (canEndDrift)
                     {
                         // No Input, and car aligned with speed direction => Stop the drift
                         IsDrifting = false;
@@ -556,7 +576,16 @@ namespace KartGame.KartSystems
                 }
 
                 // rotate our velocity based on current steer value
-                Rigidbody.velocity = Quaternion.AngleAxis(turningPower * Mathf.Sign(localVel.z) * velocitySteering * m_CurrentGrip * Time.fixedDeltaTime, transform.up) * Rigidbody.velocity;
+                var v = Quaternion.AngleAxis(turningPower * Mathf.Sign(localVel.z) * velocitySteering * m_CurrentGrip * Time.fixedDeltaTime, transform.up) * Rigidbody.velocity;
+
+                var sideVelocity = Vector3.Dot(v, transform.right);
+                var dir = Mathf.Sign(sideVelocity);
+                var sideSpeed = Math.Abs(sideVelocity);
+                if (!IsDrifting && sideSpeed > k_NullInput) {
+                    v -= transform.right * dir * Math.Min(sideSpeed, DriftEndDeceleration);
+                }
+                
+                Rigidbody.velocity = v;
             }
             else
             {
@@ -596,5 +625,16 @@ namespace KartGame.KartSystems
 
             ActivateDriftVFX(IsDrifting && GroundPercent > 0.0f);
         }
+
+        void Boost() {
+            IsBoosting = true;
+            StartCoroutine(BoostCoroutine());
+        }
+
+        IEnumerator BoostCoroutine() {
+            IsBoosting = true;
+            yield return new WaitForSeconds(BoostDuration);
+            IsBoosting = false;
+        } 
     }
 }
