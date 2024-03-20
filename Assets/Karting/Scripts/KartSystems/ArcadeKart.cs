@@ -199,6 +199,9 @@ namespace KartGame.KartSystems
         bool m_HasCollision;
         bool m_InAir = false;
 
+        float m_BaseDrag;
+        float m_BaseAngularDrag;
+
         public void AddPowerup(StatPowerup statPowerup) => m_ActivePowerupList.Add(statPowerup);
         public void SetCanMove(bool move) => m_CanMove = move;
         public float GetMaxSpeed() => Mathf.Max(m_FinalStats.TopSpeed, m_FinalStats.ReverseSpeed);
@@ -252,6 +255,10 @@ namespace KartGame.KartSystems
         void Awake()
         {
             Rigidbody = GetComponent<Rigidbody>();
+
+            m_BaseDrag = Rigidbody.drag;
+            m_BaseAngularDrag = Rigidbody.angularDrag;
+            
             m_Inputs = GetComponents<IInput>();
 
             UpdateSuspensionParams(FrontLeftWheel);
@@ -687,6 +694,16 @@ namespace KartGame.KartSystems
             var colliderSidewaysFriction = collider.sidewaysFriction;
             colliderSidewaysFriction.stiffness = 1;
             collider.sidewaysFriction = colliderSidewaysFriction;
+        }
+
+        public void SetDrag(float drag, float angularDrag) {
+            Rigidbody.drag = drag;
+            Rigidbody.angularDrag = angularDrag;
+        }
+        
+        public void RemoveDrag() {
+            Rigidbody.drag = m_BaseDrag;
+            Rigidbody.angularDrag = m_BaseAngularDrag;
         }
     }
 }
