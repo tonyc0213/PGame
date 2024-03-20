@@ -128,7 +128,8 @@ namespace KartGame.KartSystems
         public float BoostMaxSpeed;
         [Range(0.0f, 10.0f), Tooltip("Duration of boosting")]
         public float BoostDuration;
-        
+        public bool BoostAvailable;
+
         [Header("VFX")]
         [Tooltip("VFX that will be placed on the wheels when drifting.")]
         public ParticleSystem DriftSparkVFX;
@@ -180,6 +181,7 @@ namespace KartGame.KartSystems
         public bool WantsToDrift { get; private set; } = false;
         public bool IsDrifting { get; private set; } = false;
         public bool IsBoosting { get; private set; } = false;
+        public bool IsCrashing { get; private set; } = false;
         float m_CurrentGrip = 1.0f;
         float m_DriftTurningPower = 0.0f;
         float m_PreviousGroundPercent = 1.0f;
@@ -325,12 +327,12 @@ namespace KartGame.KartSystems
             GroundPercent = (float) groundedCount / 4.0f;
             AirPercent = 1 - GroundPercent;
 
-            if (Input.Boost) {
+            if (Input.Boost && BoostAvailable) {
                 Boost();
             }
             
             // apply vehicle physics
-            if (m_CanMove)
+            if (m_CanMove && !IsCrashing)
             {
                 MoveVehicle(Input.Accelerate, Input.Brake, Input.TurnInput);
             }
@@ -627,6 +629,7 @@ namespace KartGame.KartSystems
         }
 
         void Boost() {
+            BoostAvailable = false;
             IsBoosting = true;
             StartCoroutine(BoostCoroutine());
         }
@@ -635,6 +638,55 @@ namespace KartGame.KartSystems
             IsBoosting = true;
             yield return new WaitForSeconds(BoostDuration);
             IsBoosting = false;
-        } 
+        }
+
+        public void Crash(float force, float duration) {
+            StartCoroutine(CrashCoroutine(duration));
+
+            var dir = Mathf.Sign(Rigidbody.angularVelocity.y);
+            
+            Rigidbody.AddTorque(dir * transform.up * force, ForceMode.Impulse);
+        }
+        
+        IEnumerator CrashCoroutine(float duration) {
+            IsCrashing = true;
+            ActivateDriftVFX(true);
+
+            DisableWheelGrip(FrontLeftWheel);
+            DisableWheelGrip(FrontRightWheel);
+            DisableWheelGrip(RearLeftWheel);
+            DisableWheelGrip(RearRightWheel);
+
+            yield return new WaitForSeconds(duration);
+            
+            IsCrashing = false;
+            ActivateDriftVFX(false);
+            
+            EnableWheelGrip(FrontLeftWheel);
+            EnableWheelGrip(FrontRightWheel);
+            EnableWheelGrip(RearLeftWheel);
+            EnableWheelGrip(RearRightWheel);
+        }
+
+        const float k_OutOfControlWheelGrip = 0.5f;
+        void DisableWheelGrip(WheelCollider collider) {
+            var colliderForwardFriction = collider.forwardFriction;
+            colliderForwardFriction.stiffness = k_OutOfControlWheelGrip;
+            collider.forwardFriction = colliderForwardFriction;
+
+            var colliderSidewaysFriction = collider.sidewaysFriction;
+            colliderSidewaysFriction.stiffness = k_OutOfControlWheelGrip;
+            collider.sidewaysFriction = colliderSidewaysFriction;
+        }
+        
+        void EnableWheelGrip(WheelCollider collider) {
+            var colliderForwardFriction = collider.forwardFriction;
+            colliderForwardFriction.stiffness = 1;
+            collider.forwardFriction = colliderForwardFriction;
+
+            var colliderSidewaysFriction = collider.sidewaysFriction;
+            colliderSidewaysFriction.stiffness = 1;
+            collider.sidewaysFriction = colliderSidewaysFriction;
+        }
     }
 }
