@@ -79,8 +79,8 @@ public class GameFlowManager : MonoBehaviour
 			k.SetCanMove(false);
         }
 
-        playerKart.OnBoostAvailableChange += OnBoostAvailableChange.Invoke;
-        OnBoostAvailableChange.Invoke(playerKart.BoostAvailable);
+        playerKart.OnBoostAvailableChange += x => OnBoostAvailableChange.Invoke(x);
+        OnBoostAvailableChange?.Invoke(playerKart.BoostAvailable);
         
         //run race countdown animation
         ShowRaceCountdownAnimation();
