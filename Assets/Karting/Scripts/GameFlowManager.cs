@@ -2,6 +2,7 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.Playables;
 using KartGame.KartSystems;
+using UnityEngine.Events;
 using UnityEngine.SceneManagement;
 
 public enum GameState{Play, Won, Lost}
@@ -35,6 +36,7 @@ public class GameFlowManager : MonoBehaviour
     [Tooltip("Prefab for the lose game message")]
     public DisplayMessage loseDisplayMessage;
 
+    public UnityAction<bool> OnBoostAvailableChange;
 
     public GameState gameState { get; private set; }
 
@@ -77,6 +79,9 @@ public class GameFlowManager : MonoBehaviour
 			k.SetCanMove(false);
         }
 
+        playerKart.OnBoostAvailableChange += OnBoostAvailableChange.Invoke;
+        OnBoostAvailableChange.Invoke(playerKart.BoostAvailable);
+        
         //run race countdown animation
         ShowRaceCountdownAnimation();
         StartCoroutine(ShowObjectivesRoutine());

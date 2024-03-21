@@ -3,6 +3,7 @@ using System.Collections;
 using UnityEngine;
 using System.Collections.Generic;
 using System.Numerics;
+using UnityEngine.Events;
 using UnityEngine.VFX;
 using Quaternion = UnityEngine.Quaternion;
 using Vector3 = UnityEngine.Vector3;
@@ -128,8 +129,6 @@ namespace KartGame.KartSystems
         public float BoostMaxSpeed;
         [Range(0.0f, 10.0f), Tooltip("Duration of boosting")]
         public float BoostDuration;
-        public bool BoostAvailable;
-
         [Header("VFX")]
         [Tooltip("VFX that will be placed on the wheels when drifting.")]
         public ParticleSystem DriftSparkVFX;
@@ -187,6 +186,16 @@ namespace KartGame.KartSystems
         float m_PreviousGroundPercent = 1.0f;
         readonly List<(GameObject trailRoot, WheelCollider wheel, TrailRenderer trail)> m_DriftTrailInstances = new List<(GameObject, WheelCollider, TrailRenderer)>();
         readonly List<(WheelCollider wheel, float horizontalOffset, float rotation, ParticleSystem sparks)> m_DriftSparkInstances = new List<(WheelCollider, float, float, ParticleSystem)>();
+
+        public UnityAction<bool> OnBoostAvailableChange;
+        bool m_BoostAvailable = true;
+        public bool BoostAvailable {
+            get => m_BoostAvailable;
+            set {
+                m_BoostAvailable = value;
+                OnBoostAvailableChange?.Invoke(m_BoostAvailable);
+            }
+        }
 
         // can the kart move?
         bool m_CanMove = true;
