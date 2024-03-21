@@ -87,7 +87,7 @@ public class GameFlowManager : MonoBehaviour
         playerKart.OnBoostAvailableChange += x => OnBoostAvailableChange.Invoke(x);
         OnBoostAvailableChange?.Invoke(playerKart.BoostAvailable);
 
-        fpsCamera = playerKart.GetComponentInChildren<Camera>();
+        fpsCamera = playerKart.GetComponentInChildren<Camera>(true);
         toggleCamera();
         
         //run race countdown animation
