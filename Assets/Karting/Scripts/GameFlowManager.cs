@@ -36,6 +36,11 @@ public class GameFlowManager : MonoBehaviour
     [Tooltip("Prefab for the lose game message")]
     public DisplayMessage loseDisplayMessage;
 
+    [Header("Camera")] 
+    public Camera tpsCamera;
+    public Camera fpsCamera;
+    bool isfps = false;
+    
     public UnityAction<bool> OnBoostAvailableChange;
 
     public GameState gameState { get; private set; }
@@ -81,6 +86,9 @@ public class GameFlowManager : MonoBehaviour
 
         playerKart.OnBoostAvailableChange += x => OnBoostAvailableChange.Invoke(x);
         OnBoostAvailableChange?.Invoke(playerKart.BoostAvailable);
+
+        fpsCamera = playerKart.GetComponentInChildren<Camera>();
+        toggleCamera();
         
         //run race countdown animation
         ShowRaceCountdownAnimation();
@@ -92,6 +100,16 @@ public class GameFlowManager : MonoBehaviour
     IEnumerator CountdownThenStartRaceRoutine() {
         yield return new WaitForSeconds(3f);
         StartRace();
+    }
+
+    void toggleCamera() {
+        if (isfps) {
+            fpsCamera.gameObject.SetActive(true);
+            tpsCamera.gameObject.SetActive(false);
+        } else {
+            fpsCamera.gameObject.SetActive(false);
+            tpsCamera.gameObject.SetActive(true);
+        }
     }
 
     void StartRace() {
@@ -120,6 +138,10 @@ public class GameFlowManager : MonoBehaviour
 
     void Update()
     {
+        if (Input.GetButtonDown("Camera")) {
+            isfps = !isfps;
+            toggleCamera();
+        }
 
         if (gameState != GameState.Play)
         {
