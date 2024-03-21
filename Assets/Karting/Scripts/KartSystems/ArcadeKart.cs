@@ -574,10 +574,10 @@ namespace KartGame.KartSystems
                     float driftMaxSteerValue = m_FinalStats.Steer + DriftAdditionalSteer;
                     m_DriftTurningPower = Mathf.Clamp(m_DriftTurningPower + (turnInput * Mathf.Clamp01(DriftControl * Time.fixedDeltaTime)), -driftMaxSteerValue, driftMaxSteerValue);
 
-                    //bool facingVelocity = Vector3.Dot(Rigidbody.velocity.normalized, transform.forward * Mathf.Sign(accelInput)) > Mathf.Cos(MinAngleToFinishDrift * Mathf.Deg2Rad);
+                    bool facingVelocity = Vector3.Dot(Rigidbody.velocity.normalized, transform.forward * Mathf.Sign(accelInput)) > Mathf.Cos(MinAngleToFinishDrift * Mathf.Deg2Rad);
 
                     bool canEndDrift = true;
-                    if (isBraking)
+                    if (isBraking && !facingVelocity)
                         canEndDrift = false;
                     // else if (!facingVelocity)
                     //     canEndDrift = false;
