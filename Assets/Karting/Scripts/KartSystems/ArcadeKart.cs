@@ -475,16 +475,22 @@ namespace KartGame.KartSystems
 
             // if we are braking (moving reverse to where we are going)
             // use the braking accleration instead
-            float finalAccelPower = isBraking && !WantsToDrift ? m_FinalStats.Braking : accelPower;
+            float finalAccelPower =  accelPower;
 
-            float finalAcceleration =  IsBoosting ? BoostAcceleration : finalAccelPower * accelRamp;
+            float finalAcceleration = IsBoosting ? BoostAcceleration : finalAccelPower * accelRamp;
 
             // apply inputs to forward/backward
             float turningPower = IsDrifting ? m_DriftTurningPower : turnInput * m_FinalStats.Steer;
 
             Quaternion turnAngle = Quaternion.AngleAxis(turningPower, transform.up);
             Vector3 fwd = turnAngle * transform.forward;
-            Vector3 movement = fwd * accelInput * finalAcceleration * ((m_HasCollision || GroundPercent > 0.0f) ? 1.0f : 0.0f);
+            
+            var netAcceleration = accelInput * finalAcceleration;
+            if (localVelDirectionIsFwd && !accelDirectionIsFwd || brake && !(WantsToDrift || IsDrifting)) {
+                netAcceleration += -Mathf.Sign(localVel.z) * baseStats.Braking;
+            }
+            
+            Vector3 movement = fwd * netAcceleration * ((m_HasCollision || GroundPercent > 0.0f) ? 1.0f : 0.0f);
 
             // forward movement
             bool wasOverMaxSpeed = currentSpeed >= maxSpeed;
@@ -574,10 +580,10 @@ namespace KartGame.KartSystems
                     float driftMaxSteerValue = m_FinalStats.Steer + DriftAdditionalSteer;
                     m_DriftTurningPower = Mathf.Clamp(m_DriftTurningPower + (turnInput * Mathf.Clamp01(DriftControl * Time.fixedDeltaTime)), -driftMaxSteerValue, driftMaxSteerValue);
 
-                    //bool facingVelocity = Vector3.Dot(Rigidbody.velocity.normalized, transform.forward * Mathf.Sign(accelInput)) > Mathf.Cos(MinAngleToFinishDrift * Mathf.Deg2Rad);
+                    bool facingVelocity = Vector3.Dot(Rigidbody.velocity.normalized, transform.forward * Mathf.Sign(accelInput)) > Mathf.Cos(MinAngleToFinishDrift * Mathf.Deg2Rad);
 
                     bool canEndDrift = true;
-                    if (isBraking)
+                    if (isBraking && !facingVelocity)
                         canEndDrift = false;
                     // else if (!facingVelocity)
                     //     canEndDrift = false;

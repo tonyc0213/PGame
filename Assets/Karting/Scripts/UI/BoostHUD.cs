@@ -9,7 +9,7 @@ namespace KartGame.UI {
 			m_GameFlowManager = FindObjectOfType<GameFlowManager>();
 			DebugUtility.HandleErrorIfNullFindObject<GameFlowManager, FeedbackFlashHUD>(m_GameFlowManager, this);
 			
-			m_GameFlowManager.OnBoostAvailableChange += x => BoostIndicator.SetActive(x);
+			m_GameFlowManager.playerKart.OnBoostAvailableChange += x => BoostIndicator.SetActive(x);
 		}
 	}
 }
