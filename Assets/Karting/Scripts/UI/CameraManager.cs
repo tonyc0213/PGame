@@ -1,28 +1,39 @@
 ﻿using System;
+using System.Collections;
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace KartGame.UI {
 	public class CameraManager : MonoBehaviour {
-		[Header("Camera")] 
+		[Header("Third Person Camera")] 
 		public Camera tpsCamera;
+		public float ToTPSDelay;
+		public UnityEvent OnChangeToThirdPerson;
+		
+		[Header("First Person Camera")] 
 		public Camera fpsCamera;
+		public float ToFPSDelay;
+		public UnityEvent OnChangeToFirstPerson;
+		
 		bool isfps = false;
-
+		bool canChangeCamera;
 		void Start() {
 			var gameFlowManager = GetComponent<GameFlowManager>();
 			
 			fpsCamera = gameFlowManager.playerKart.GetComponentInChildren<Camera>(true);
-			toggleCamera();
+			OnChangeToThirdPerson.Invoke();
+			_toggleCamera();
+
+			canChangeCamera = true;
 		}
 
 		void Update() {
-			if (Input.GetButtonDown("Camera")) {
-				isfps = !isfps;
-				toggleCamera();
+			if (Input.GetButtonDown("Camera") && canChangeCamera) {
+				StartCoroutine(toggleCamera());
 			}
 		}
 
-		void toggleCamera() {
+		void _toggleCamera() {
 			if (isfps) {
 				fpsCamera.gameObject.SetActive(true);
 				tpsCamera.gameObject.SetActive(false);
@@ -32,5 +43,15 @@ namespace KartGame.UI {
 			}
 		}
 
+		IEnumerator toggleCamera() {
+			canChangeCamera = false;
+			
+			isfps = !isfps;
+			(isfps ? OnChangeToFirstPerson : OnChangeToThirdPerson).Invoke();
+			yield return new WaitForSeconds(isfps ? ToFPSDelay : ToTPSDelay);
+
+			canChangeCamera = true;
+			_toggleCamera();
+		}
 	}
 }

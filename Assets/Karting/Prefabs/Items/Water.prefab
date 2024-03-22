@@ -110,8 +110,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 46db90918cff4ec8b81e4604f324f328, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  drag: 5
-  angularDrag: 5
+  drag: 3
+  angularDrag: 1.5
   layerMask:
     serializedVersion: 2
     m_Bits: 8192
