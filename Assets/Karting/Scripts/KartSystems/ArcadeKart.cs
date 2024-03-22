@@ -486,7 +486,7 @@ namespace KartGame.KartSystems
             Vector3 fwd = turnAngle * transform.forward;
             
             var netAcceleration = accelInput * finalAcceleration;
-            if (brake && !(WantsToDrift || IsDrifting)) {
+            if (localVelDirectionIsFwd && !accelDirectionIsFwd || brake && !(WantsToDrift || IsDrifting)) {
                 netAcceleration += -Mathf.Sign(localVel.z) * baseStats.Braking;
             }
             
