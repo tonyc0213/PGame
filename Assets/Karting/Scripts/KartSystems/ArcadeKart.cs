@@ -57,6 +57,12 @@ namespace KartGame.KartSystems
 
             [Tooltip("Additional gravity for when the kart is in the air.")]
             public float AddedGravity;
+            
+            [Tooltip("Reduce drag against Water Puddle.")]
+            public float WaterDragResist;
+            
+            [Tooltip("Reduce drag against Water Puddle.")]
+            public float WaterAngularDragResist;
 
             // allow for stat adding for powerups.
             public static Stats operator +(Stats a, Stats b)
@@ -73,6 +79,8 @@ namespace KartGame.KartSystems
                     ReverseSpeed        = a.ReverseSpeed + b.ReverseSpeed,
                     TopSpeed            = a.TopSpeed + b.TopSpeed,
                     Steer               = a.Steer + b.Steer,
+                    WaterDragResist     = a.WaterDragResist + b.WaterDragResist,
+                    WaterAngularDragResist  = a.WaterAngularDragResist + b.WaterAngularDragResist,
                 };
             }
         }
@@ -94,6 +102,8 @@ namespace KartGame.KartSystems
             CoastingDrag        = 4f,
             Grip                = .95f,
             AddedGravity        = 1f,
+            WaterDragResist     = 0,
+            WaterAngularDragResist     = 0,
         };
 
         [Header("Vehicle Visual")] 
@@ -712,8 +722,8 @@ namespace KartGame.KartSystems
         }
 
         public void SetDrag(float drag, float angularDrag) {
-            Rigidbody.drag = drag;
-            Rigidbody.angularDrag = angularDrag;
+            Rigidbody.drag = Math.Max(drag - m_FinalStats.WaterDragResist, 0);
+            Rigidbody.angularDrag =  Math.Max(angularDrag - m_FinalStats.WaterAngularDragResist, 0);;
         }
         
         public void RemoveDrag() {

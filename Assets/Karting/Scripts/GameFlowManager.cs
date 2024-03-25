@@ -1,8 +1,11 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Playables;
 using KartGame.KartSystems;
+using Karting.Scripts.Utilities;
 using UnityEngine.Events;
 using UnityEngine.SceneManagement;
 
@@ -39,10 +42,11 @@ public class GameFlowManager : MonoBehaviour
     
     public GameState gameState { get; private set; }
 
-    public bool autoFindKarts = true;
+    public KartSettings kartSettings;
+    public Transform startPoint;
     public ArcadeKart playerKart;
 
-    ArcadeKart[] karts;
+    List<ArcadeKart> karts;
     ObjectiveManager m_ObjectiveManager;
     TimeManager m_TimeManager;
     float m_TimeLoadEndGameScene;
@@ -50,15 +54,14 @@ public class GameFlowManager : MonoBehaviour
     float elapsedTimeBeforeEndScene = 0;
 
     void Awake() {
-        if (autoFindKarts)
-        {
-            karts = FindObjectsOfType<ArcadeKart>();
-            if (karts.Length > 0)
-            {
-                if (!playerKart) playerKart = karts[0];
-            }
-            DebugUtility.HandleErrorIfNullFindObject<ArcadeKart, GameFlowManager>(playerKart, this);
-        }
+        var _karts = FindObjectsOfType<ArcadeKart>();
+        
+        playerKart = Instantiate(kartSettings.selected.prefab);
+        playerKart.transform.position = startPoint.position;
+
+        karts = new List<ArcadeKart>();
+        karts.Add(playerKart);
+        karts.AddRange(_karts);
     }
 
     void Start()
