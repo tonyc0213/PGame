@@ -11,7 +11,7 @@ namespace KartGame.GameModes {
 		public event Action OnCollect;
 		public ParticlePool CollectVFX;
 		public AudioClip CollectSound;
-		
+
 		void OnTriggerEnter(Collider other) {
 			if ((layerMask.value & 1 << other.gameObject.layer) > 0 && other.gameObject.CompareTag("Player")) {
 				OnCollect?.Invoke();

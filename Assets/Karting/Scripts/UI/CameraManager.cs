@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using Cinemachine;
+using DigitalRuby.RainMaker;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -17,7 +18,9 @@ namespace KartGame.UI {
 		public Camera fpsCamera;
 		public float ToFPSDelay;
 		public UnityEvent OnChangeToFirstPerson;
-		
+
+		public RainScript rain;
+
 		bool isfps = false;
 		bool canChangeCamera;
 		void Start() {
@@ -45,9 +48,13 @@ namespace KartGame.UI {
 			if (isfps) {
 				fpsCamera.gameObject.SetActive(true);
 				tpsCamera.gameObject.SetActive(false);
+
+				rain.Camera = fpsCamera;
 			} else {
 				fpsCamera.gameObject.SetActive(false);
 				tpsCamera.gameObject.SetActive(true);
+				
+				rain.Camera = tpsCamera;
 			}
 		}
 

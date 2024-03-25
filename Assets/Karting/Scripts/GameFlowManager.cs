@@ -6,6 +6,7 @@ using UnityEngine;
 using UnityEngine.Playables;
 using KartGame.KartSystems;
 using Karting.Scripts.Utilities;
+using Karting.UI.Radar;
 using UnityEngine.Events;
 using UnityEngine.SceneManagement;
 
@@ -73,6 +74,7 @@ public class GameFlowManager : MonoBehaviour
         DebugUtility.HandleErrorIfNullFindObject<TimeManager, GameFlowManager>(m_TimeManager, this);
 
         AudioUtility.SetMasterVolume(1);
+        RadarManager.origin = playerKart.transform;
 
         winDisplayMessage.gameObject.SetActive(false);
         loseDisplayMessage.gameObject.SetActive(false);
