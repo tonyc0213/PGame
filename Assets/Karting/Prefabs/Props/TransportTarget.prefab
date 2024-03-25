@@ -202,7 +202,9 @@ MonoBehaviour:
   CollectSound: {fileID: 0}
   active: 0
   transportStart: {fileID: 8821573495146253060}
+  startIndicatorColor: {r: 1, g: 0.82920635, b: 0, a: 1}
   transportEnd: {fileID: 4904650473664901668}
+  endIndicatorColor: {r: 0.068633795, g: 1, b: 0, a: 1}
 --- !u!1 &4904650474624791872
 GameObject:
   m_ObjectHideFlags: 0
