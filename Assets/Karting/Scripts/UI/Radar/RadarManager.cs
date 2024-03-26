@@ -16,10 +16,6 @@ namespace Karting.UI.Radar {
 		
 		Dictionary<Transform, Transform> targets = new Dictionary<Transform, Transform>();
 
-		void Awake() {
-			RegisterTarget += addTarget;
-			UnregisterTarget += removeTarget;
-		}
 
 		void Update() {
 			foreach (var (target, indicator) in targets) {
@@ -43,6 +39,16 @@ namespace Karting.UI.Radar {
 				targets.Remove(target);
 				Destroy(indicator.gameObject);
 			}
+		}
+
+		void OnEnable() {
+			RegisterTarget += addTarget;
+			UnregisterTarget += removeTarget;
+		}
+
+		void OnDestroy() {
+			RegisterTarget -= addTarget;
+			UnregisterTarget -= removeTarget;
 		}
 	}
 }

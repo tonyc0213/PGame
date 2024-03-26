@@ -165,6 +165,7 @@ public class GameFlowManager : MonoBehaviour
         // Remember that we need to load the appropriate end scene after a delay
         gameState = win ? GameState.Won : GameState.Lost;
         endGameFadeCanvasGroup.gameObject.SetActive(true);
+        
         if (win)
         {
             m_SceneToLoad = winSceneName;

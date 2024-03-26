@@ -12,23 +12,21 @@ namespace Karting.Scripts.Utilities {
 		public class KartItem {
 			public string name;
 			public ArcadeKart prefab;
+			public GameObject displayModel;
 		}
 		
 		public List<KartItem> karts;
 
-		[SerializeField] KartItem _selected;
+		public KartItem selected => karts[_selectedIndex];
 
-		public KartItem selected {
-			get {
-				if (_selected?.prefab == null) {
-					_selected = karts[0];
-				}
-
-				return _selected;
+		[SerializeField] int _selectedIndex;
+		public int selectedIndex {
+			get => _selectedIndex;
+			set {
+				_selectedIndex = value;
+				OnSelectedKartChange?.Invoke(_selectedIndex);
 			}
-			set => _selected = value;
 		}
+		public event Action<int> OnSelectedKartChange;
 	}
-	
-
 }
