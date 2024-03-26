@@ -22,7 +22,6 @@ namespace KartGame.UI {
 
 		public RainScript rain;
 
-		public List<Canvas> ScreenSpaceCanvases;
 
 		bool isfps = false;
 		bool canChangeCamera;
@@ -51,18 +50,12 @@ namespace KartGame.UI {
 			if (isfps) {
 				fpsCamera.gameObject.SetActive(true);
 				tpsCamera.gameObject.SetActive(false);
-
-				foreach (var canvas in ScreenSpaceCanvases) {
-					canvas.worldCamera = fpsCamera;
-				}
+				
 				rain.Camera = fpsCamera;
 			} else {
 				fpsCamera.gameObject.SetActive(false);
 				tpsCamera.gameObject.SetActive(true);
-				
-				foreach (var canvas in ScreenSpaceCanvases) {
-					canvas.worldCamera = tpsCamera;
-				}
+	
 				rain.Camera = tpsCamera;
 			}
 		}
