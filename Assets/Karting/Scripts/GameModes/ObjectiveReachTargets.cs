@@ -23,9 +23,9 @@ public class ObjectiveReachTargets : Objective
         
         yield return new WaitForEndOfFrame();
 
-        title = "Collect " +
-                (mustCollectAllPickups ? "all the" : pickupsToCompleteObjective.ToString()) + " " +
-                targetName + "s";
+        // title = "Collect " +
+        //         (mustCollectAllPickups ? "all the" : pickupsToCompleteObjective.ToString()) + " " +
+        //         targetName + "s";
         
         if (mustCollectAllPickups)
             pickupsToCompleteObjective = NumberOfPickupsTotal;

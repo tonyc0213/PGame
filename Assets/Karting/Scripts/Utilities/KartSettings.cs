@@ -7,7 +7,6 @@ using UnityEngine;
 namespace Karting.Scripts.Utilities {
 	[CreateAssetMenu(menuName = "Kart Setting")]
 	public class KartSettings : ScriptableObject {
-
 		[Serializable]
 		public class KartItem {
 			public string name;
