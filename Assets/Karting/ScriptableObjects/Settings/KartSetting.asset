@@ -27,4 +27,4 @@ MonoBehaviour:
     prefab: {fileID: 258504131564754059, guid: 5864d3f71d64c424eb904c7e01e46c9b, type: 3}
     displayModel: {fileID: 8008810164444672779, guid: c5140d9bce3488f4e986f04fc10ee240,
       type: 3}
-  _selectedIndex: 1
+  _selectedIndex: 0
