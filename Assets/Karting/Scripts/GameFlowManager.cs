@@ -43,10 +43,15 @@ public class GameFlowManager : MonoBehaviour
     
     public GameState gameState { get; private set; }
 
+    [Header("Kart Settings")]
     public KartSettings kartSettings;
     public Transform startPoint;
     public ArcadeKart playerKart;
 
+    [Header("Save")]
+    public SaveObject SaveObject;
+    public ScoreObject ScoreObject;
+    
     List<ArcadeKart> karts;
     ObjectiveManager m_ObjectiveManager;
     TimeManager m_TimeManager;
@@ -103,6 +108,8 @@ public class GameFlowManager : MonoBehaviour
 			k.SetCanMove(true);
         }
         m_TimeManager.StartRace();
+
+        ScoreObject.currentScore = 0;
     }
 
     void ShowRaceCountdownAnimation() {
@@ -154,20 +161,34 @@ public class GameFlowManager : MonoBehaviour
         }
     }
 
+    const string winGalleryName = "win";
+    const string loseGalleryName = "lose";
+    
     void EndGame(bool win)
     {
         // unlocks the cursor before leaving the scene, to be able to click buttons
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
 
+        var score = (int)m_TimeManager.TimeRemaining  * 10000;
         m_TimeManager.StopRace();
 
         // Remember that we need to load the appropriate end scene after a delay
         gameState = win ? GameState.Won : GameState.Lost;
         endGameFadeCanvasGroup.gameObject.SetActive(true);
+
+        ScoreObject.currentScore = score;
+        if (score > SaveObject.mySave.highScore) {
+            SaveObject.mySave.highScore = score;
+            SaveObject.writeSave();
+        }
         
-        if (win)
-        {
+        if (win) {
+            if (!SaveObject.mySave.unlockedItems.Contains(winGalleryName)) {
+                SaveObject.mySave.unlockedItems.Add(winGalleryName);
+                SaveObject.writeSave();
+            }
+            
             m_SceneToLoad = winSceneName;
             m_TimeLoadEndGameScene = Time.time + endSceneLoadDelay + delayBeforeFadeToBlack;
 
@@ -181,9 +202,12 @@ public class GameFlowManager : MonoBehaviour
             // create a game message
             winDisplayMessage.delayBeforeShowing = delayBeforeWinMessage;
             winDisplayMessage.gameObject.SetActive(true);
-        }
-        else
-        {
+        } else {
+            if (!SaveObject.mySave.unlockedItems.Contains(loseGalleryName)) {
+                SaveObject.mySave.unlockedItems.Add(loseGalleryName);
+                SaveObject.writeSave();
+            }
+            
             m_SceneToLoad = loseSceneName;
             m_TimeLoadEndGameScene = Time.time + endSceneLoadDelay + delayBeforeFadeToBlack;
 
