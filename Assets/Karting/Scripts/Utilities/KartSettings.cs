@@ -18,7 +18,7 @@ namespace Karting.Scripts.Utilities {
 
 		public KartItem selected => karts[_selectedIndex];
 
-		int _selectedIndex;
+		[SerializeField] int _selectedIndex;
 		public int selectedIndex {
 			get => _selectedIndex;
 			set {

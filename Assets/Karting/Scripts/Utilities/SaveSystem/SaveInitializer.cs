@@ -8,7 +8,7 @@ namespace Karting.Scripts.Utilities {
 		public ToggleGameObjectButton introButton;
 		
 		void Awake() {
-			if (saveObject != null) {
+			if (saveObject != null && saveObject.mySave != null) {
 				saveObject.loadSave();
 			}
 		}
