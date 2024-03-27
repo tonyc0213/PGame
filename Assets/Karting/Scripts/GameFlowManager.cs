@@ -161,6 +161,9 @@ public class GameFlowManager : MonoBehaviour
         }
     }
 
+    const string winGalleryName = "win";
+    const string loseGalleryName = "lose";
+    
     void EndGame(bool win)
     {
         // unlocks the cursor before leaving the scene, to be able to click buttons
@@ -180,8 +183,12 @@ public class GameFlowManager : MonoBehaviour
             SaveObject.writeSave();
         }
         
-        if (win)
-        {
+        if (win) {
+            if (!SaveObject.mySave.unlockedItems.Contains(winGalleryName)) {
+                SaveObject.mySave.unlockedItems.Add(winGalleryName);
+                SaveObject.writeSave();
+            }
+            
             m_SceneToLoad = winSceneName;
             m_TimeLoadEndGameScene = Time.time + endSceneLoadDelay + delayBeforeFadeToBlack;
 
@@ -195,9 +202,12 @@ public class GameFlowManager : MonoBehaviour
             // create a game message
             winDisplayMessage.delayBeforeShowing = delayBeforeWinMessage;
             winDisplayMessage.gameObject.SetActive(true);
-        }
-        else
-        {
+        } else {
+            if (!SaveObject.mySave.unlockedItems.Contains(loseGalleryName)) {
+                SaveObject.mySave.unlockedItems.Add(loseGalleryName);
+                SaveObject.writeSave();
+            }
+            
             m_SceneToLoad = loseSceneName;
             m_TimeLoadEndGameScene = Time.time + endSceneLoadDelay + delayBeforeFadeToBlack;
 
