@@ -139,6 +139,7 @@ namespace KartGame.KartSystems
         public float BoostMaxSpeed;
         [Range(0.0f, 10.0f), Tooltip("Duration of boosting")]
         public float BoostDuration;
+
         [Header("VFX")]
         [Tooltip("VFX that will be placed on the wheels when drifting.")]
         public ParticleSystem DriftSparkVFX;
@@ -156,6 +157,8 @@ namespace KartGame.KartSystems
         public GameObject NozzleVFX;
         [Tooltip("List of the kart's nozzles.")]
         public List<Transform> Nozzles;
+        [Tooltip("Boost Trail.")]
+        public List<TrailRenderer> BoostTrails;
 
         [Header("Suspensions")]
         [Tooltip("The maximum extension possible between the kart's body and the wheels.")]
@@ -261,6 +264,12 @@ namespace KartGame.KartSystems
             }
         }
 
+        void ActivateBoostTrails(bool active) {
+            foreach (var trailRenderer in BoostTrails) {
+                trailRenderer.emitting = active;
+            }
+        }
+
         void UpdateSuspensionParams(WheelCollider wheel)
         {
             wheel.suspensionDistance = SuspensionHeight;
@@ -306,6 +315,8 @@ namespace KartGame.KartSystems
                     Instantiate(NozzleVFX, nozzle, false);
                 }
             }
+
+            ActivateBoostTrails(false);
         }
 
         void AddTrailToWheel(WheelCollider wheel)
@@ -668,8 +679,12 @@ namespace KartGame.KartSystems
 
         IEnumerator BoostCoroutine() {
             IsBoosting = true;
+            ActivateBoostTrails(true);
+            
             yield return new WaitForSeconds(BoostDuration);
+            
             IsBoosting = false;
+            ActivateBoostTrails(false);
         }
 
         public void Crash(float force, float duration) {

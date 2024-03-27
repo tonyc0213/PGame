@@ -4150,9 +4150,21 @@ PrefabInstance:
       objectReference: {fileID: 1207105318}
     - target: {fileID: 1315839542190839936, guid: b26c4a65cf4c6475a92bfd03c2c3282b,
         type: 3}
+      propertyPath: SaveObject
+      value: 
+      objectReference: {fileID: 11400000, guid: 5ae938a0a08a50b4ea97c17b8396e8c9,
+        type: 2}
+    - target: {fileID: 1315839542190839936, guid: b26c4a65cf4c6475a92bfd03c2c3282b,
+        type: 3}
       propertyPath: startPoint
       value: 
       objectReference: {fileID: 1370164161}
+    - target: {fileID: 1315839542190839936, guid: b26c4a65cf4c6475a92bfd03c2c3282b,
+        type: 3}
+      propertyPath: ScoreObject
+      value: 
+      objectReference: {fileID: 11400000, guid: ad7660b6b919231429e0696a19ccdd0e,
+        type: 2}
     - target: {fileID: 1315839542190839936, guid: b26c4a65cf4c6475a92bfd03c2c3282b,
         type: 3}
       propertyPath: kartSettings

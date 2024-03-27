@@ -10,7 +10,7 @@ namespace Karting.Scripts.Utilities {
 		public class SaveItem {
 			public bool hasShownIntro;
 			public List<string> unlockedItems;
-			public List<int> highScores;
+			public int highScore;
 		}
 
 		SaveItem _mySave;
@@ -28,11 +28,12 @@ namespace Karting.Scripts.Utilities {
 		string savePath => $"{Application.persistentDataPath}/GamePrefs.json";
 		
 		public void loadSave() {
+			Debug.Log($"Loading save from {savePath}");
 			if (File.Exists(savePath)) {
 				string fileContents = File.ReadAllText(savePath);
 				_mySave = JsonUtility.FromJson<SaveItem>(fileContents);
 			} else {
-				_mySave = new SaveItem() { unlockedItems = new List<string>(), highScores = new List<int>() };
+				_mySave = new SaveItem() { unlockedItems = new List<string>(), highScore = 0 };
 			}
 		}
 
