@@ -14,7 +14,7 @@ namespace Karting.Scripts.Utilities {
 			public ArcadeKart prefab;
 			public GameObject displayModel;
 		}
-		
+
 		public List<KartItem> karts;
 
 		public KartItem selected => karts[_selectedIndex];
