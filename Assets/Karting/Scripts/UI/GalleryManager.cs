@@ -7,7 +7,7 @@ namespace KartGame.UI {
 	public class GalleryManager : MonoBehaviour {
 		public SaveObject SaveObject;
 
-		void Start() {
+		void Awake() {
 			var buttons = GetComponentsInChildren<Button>();
 
 			foreach (var button in buttons) {

@@ -1046,6 +1046,11 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4665862660239264250, guid: f208ec0b6d3dd844ea6d305dbb51684d,
+        type: 3}
+      propertyPath: m_PreserveAspect
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6019688244682777763, guid: f208ec0b6d3dd844ea6d305dbb51684d,
         type: 3}
       propertyPath: m_RootOrder
