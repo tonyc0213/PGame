@@ -5,7 +5,7 @@ namespace Karting.Scripts.Utilities {
 	public class SaveInitializer : MonoBehaviour {
 		public SaveObject saveObject;
 
-		public ToggleGameObjectButton introButton;
+		public GameObject intro;
 		
 		void Awake() {
 			if (saveObject != null && saveObject.mySave != null) {
@@ -15,7 +15,7 @@ namespace Karting.Scripts.Utilities {
 
 		void Start() {
 			if (!saveObject.mySave.hasShownIntro) {
-				introButton.SetGameObjectActive(true);
+				intro.SetActive(true);
 				
 				saveObject.mySave.hasShownIntro = true;
 				saveObject.writeSave();
