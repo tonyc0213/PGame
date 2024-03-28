@@ -13,18 +13,18 @@ MonoBehaviour:
   m_Name: KartSetting
   m_EditorClassIdentifier: 
   karts:
-  - name: Default
+  - name: "\u6551\u4E16\u4E3B Otter"
     prefab: {fileID: 4810912518991602694, guid: 19954de30401f73428254541a9ad156e,
       type: 3}
     displayModel: {fileID: 8008810164444672779, guid: 8b725239c75087c439a869b0b3fd1fc8,
       type: 3}
-  - name: Ski
+  - name: "\u51AC\u5929\u8981\u6ED1\u96EA Otter"
     prefab: {fileID: 5561178462144440507, guid: dc8740ef381f95c4fb4188c28fabce62,
       type: 3}
     displayModel: {fileID: 8008810164444672779, guid: 67964064c7549df48ba352bee89e4475,
       type: 3}
-  - name: Tree
+  - name: "\u4EE5\u514D\u7BC0\u5916\u751F\u679D Otter"
     prefab: {fileID: 258504131564754059, guid: 5864d3f71d64c424eb904c7e01e46c9b, type: 3}
     displayModel: {fileID: 8008810164444672779, guid: c5140d9bce3488f4e986f04fc10ee240,
       type: 3}
-  _selectedIndex: 0
+  _selectedIndex: 1
