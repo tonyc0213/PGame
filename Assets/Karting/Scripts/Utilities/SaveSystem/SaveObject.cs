@@ -38,6 +38,8 @@ namespace Karting.Scripts.Utilities {
 		}
 
 		public void writeSave() {
+			Debug.Log($"Writing save to {savePath}");
+			
 			string jsonString = JsonUtility.ToJson(mySave);
 			File.WriteAllText(savePath, jsonString);
 		}
