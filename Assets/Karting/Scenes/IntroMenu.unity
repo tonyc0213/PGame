@@ -397,13 +397,41 @@ Animation:
   m_GameObject: {fileID: 741063492}
   m_Enabled: 1
   serializedVersion: 3
-  m_Animation: {fileID: 0}
+  m_Animation: {fileID: 7400000, guid: 233720562b32f7d4f8fbb29cb193e7a8, type: 2}
   m_Animations:
   - {fileID: 7400000, guid: 233720562b32f7d4f8fbb29cb193e7a8, type: 2}
   m_WrapMode: 0
   m_PlayAutomatically: 1
   m_AnimatePhysics: 0
   m_CullingType: 0
+--- !u!114 &741063497
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 741063492}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0987f26bdded4999ba7b42e663578f6a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  time: 17
+  OnTimeUp:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 741063492}
+        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+        m_MethodName: SetActive
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &853881631 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 853881631, guid: f208ec0b6d3dd844ea6d305dbb51684d,
@@ -1127,17 +1155,17 @@ PrefabInstance:
     - target: {fileID: 7548777653338455703, guid: f208ec0b6d3dd844ea6d305dbb51684d,
         type: 3}
       propertyPath: m_SizeDelta.x
-      value: 1446
+      value: 1410
       objectReference: {fileID: 0}
     - target: {fileID: 7548777653338455703, guid: f208ec0b6d3dd844ea6d305dbb51684d,
         type: 3}
       propertyPath: m_SizeDelta.y
-      value: 2048
+      value: 3072
       objectReference: {fileID: 0}
     - target: {fileID: 7548777653338455703, guid: f208ec0b6d3dd844ea6d305dbb51684d,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0
+      value: -213.56442
       objectReference: {fileID: 0}
     - target: {fileID: 8266387097924703878, guid: f208ec0b6d3dd844ea6d305dbb51684d,
         type: 3}
